@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for, Response
 import pandas as pd
-import sqlite3, io
+import sqlite3, io, pygal
 
 app = Flask(__name__, template_folder='template')
 
@@ -39,7 +39,6 @@ def delete(id):
     conn = conexao_banco()
     conn.execute(f'DELETE FROM vendas WHERE ID = {id}')
     conn.commit()
-    conn.close()
     return redirect(url_for('index'))
 
 @app.route('/csv')
@@ -52,6 +51,18 @@ def csv():
 
     output.seek(0)
     return Response(output, mimetype="application/ms-excel", headers={"Content-Disposition":"attachment;filename=teste.csv"})
+
+@app.route("/graf")
+def graf():
+    conn = conexao_banco()
+    vendas = pd.read_sql_query("select max(estado) as estado, sum(valor_venda) as valor from vendas group by estado", conn)
+    chart = pygal.Bar()
+    chart.x_labels = [item['estado'] for _, item in vendas.iterrows()]
+    mark_list = [item['valor'] for _, item in vendas.iterrows()]
+    chart.add('Total/Estado',mark_list)
+    # chart.render_to_file('crud_vendas/image/graf1.svg')
+    return render_template('graf.html',image_url=chart.render_data_uri())
+
 
 def import_csv():
     filename = r'crud_vendas\arquivo\data.csv'
