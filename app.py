@@ -41,6 +41,28 @@ def delete(id):
     conn.commit()
     return redirect(url_for('index'))
 
+@app.route('/edit/<int:id>', methods=['POST', 'GET'])
+def edit(id):
+    conn = conexao_banco()
+    cur = conn.cursor()
+    cur.execute(f'select * FROM vendas WHERE ID = {id}')
+    vendas = cur.fetchall()
+    conn.close()
+
+    if request.method == 'POST':
+        valor = request.form['venda']
+        status = request.form['status']
+        quantidade = request.form['quantidade']
+        estado = request.form['estado']
+        con = conexao_banco()
+        cur = con.cursor()
+        cur.execute(f"UPDATE vendas SET VALOR_VENDA=?, STATUS=?, QTD_VENDAS=?, ESTADO=? WHERE ID = {id}", (valor,status,quantidade,estado))
+        con.commit()
+        con.close()
+        return redirect(url_for('index'))
+
+    return render_template('edit.html', vendas=vendas)
+
 @app.route('/csv')
 def csv():
     output = io.BytesIO()
