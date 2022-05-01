@@ -6,4 +6,4 @@
 
 -Depois execute na pasta raiz do projeto "python app.py", e acesse o link Running on.
 
-![Screenshot](screenshot.png)
+![Screenshot](Screenshot.png)
