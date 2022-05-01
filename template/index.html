@@ -13,6 +13,7 @@
   </head>
   <body>
     <h1 style="text-align: center;">CRUD - VENDAS</h1>
+    <a href="{{'add'}}"><h3 style="text-align: center;">Adicionar Venda</h3></a>
 
     <div class="container">
         <div class="col-xs-12">
@@ -42,7 +43,7 @@
                     <td>{{item.qtd_vendas}}</td>
                     <td>{{item.estado}}</td>
                     <td>
-                        <a href="/edit/{{item.id}}">Excluir</a>/
+                        <a href="/delete/{{item.id}}">Excluir</a>/
                         <a href="/edit/{{item.id}}">Editar</a>
                     </td>
                     </tr>
