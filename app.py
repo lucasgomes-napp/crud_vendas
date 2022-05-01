@@ -5,7 +5,7 @@ import sqlite3, io, pygal
 app = Flask(__name__, template_folder='template')
 
 def conexao_banco():
-    conn = sqlite3.connect('crud_vendas/bd/vendas.db')
+    conn = sqlite3.connect('bd/vendas.db')
     return conn
 
 @app.route("/")
@@ -87,7 +87,7 @@ def graf():
 
 
 def import_csv():
-    filename = r'crud_vendas\arquivo\data.csv'
+    filename = r'arquivo\data.csv'
     sales = pd.read_csv(filename)
     sales = sales.dropna().rename(columns={
         'i': 'ID',
@@ -99,10 +99,10 @@ def import_csv():
         'qtd_p': 'QTD_VENDAS',
         'e': 'ESTADO'})
 
-    conn = sqlite3.connect(r'crud_vendas\bd\vendas.db')
+    conn = sqlite3.connect(r'bd\vendas.db')
     sales.to_sql(name='vendas', con=conn, index=False)
 
 
 if __name__ == '__main__':
     #import_csv()
-    app.run()
+    app.run(debug=True)
