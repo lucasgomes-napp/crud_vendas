@@ -1,6 +1,6 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, Response
 import pandas as pd
-import sqlite3, time
+import sqlite3, io
 
 app = Flask(__name__, template_folder='template')
 
@@ -30,6 +30,7 @@ def addData():
         cur = con.cursor()
         cur.execute("INSERT INTO vendas(VALOR_VENDA, STATUS, QTD_VENDAS, ESTADO )values(?,?,?,?)", (valor,status,quantidade,estado))
         con.commit()
+        con.close()
         return redirect(url_for('index'))
 
 
@@ -38,7 +39,19 @@ def delete(id):
     conn = conexao_banco()
     conn.execute(f'DELETE FROM vendas WHERE ID = {id}')
     conn.commit()
+    conn.close()
     return redirect(url_for('index'))
+
+@app.route('/csv')
+def csv():
+    output = io.BytesIO()
+    conn = conexao_banco()
+    csv = pd.read_sql_query("SELECT * FROM vendas", conn)
+    csv.to_csv(output, index=False)
+    conn.close()
+
+    output.seek(0)
+    return Response(output, mimetype="application/ms-excel", headers={"Content-Disposition":"attachment;filename=teste.csv"})
 
 def import_csv():
     filename = r'crud_vendas\arquivo\data.csv'
